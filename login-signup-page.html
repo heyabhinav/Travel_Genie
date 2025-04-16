@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Signup</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="app-logo">
+            <h1>TravelGenie</h1>
+        </div>
+        <div class="tabs">
+            <div class="tab active" data-tab="login">Login</div>
+            <div class="tab" data-tab="signup">Sign Up</div>
+        </div>
+        
+        <div class="forms">
+            <!-- Login Form -->
+            <div class="form active" id="login-form">
+                <div class="input-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="Enter your email">
+                    <div class="error" id="login-email-error">Please enter a valid email address</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password">
+                    <div class="error" id="login-password-error">Password is required</div>
+                </div>
+                
+                <button id="login-btn">Login</button>
+                
+                <div class="form-footer">
+                    <p>Forgot password? <a href="#">Reset it</a></p>
+                </div>
+                
+                <div class="success-message" id="login-success">Login successful!</div>
+            </div>
+            
+            <!-- Sign Up Form -->
+            <div class="form" id="signup-form">
+                <div class="input-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" placeholder="Enter your full name">
+                    <div class="error" id="signup-name-error">Name is required</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" placeholder="Enter your email">
+                    <div class="error" id="signup-email-error">Please enter a valid email address</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password">
+                    <div class="error" id="signup-password-error">Password must be at least 6 characters</div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="signup-confirm">Confirm Password</label>
+                    <input type="password" id="signup-confirm" placeholder="Confirm your password">
+                    <div class="error" id="signup-confirm-error">Passwords do not match</div>
+                </div>
+                
+                <button id="signup-btn">Sign Up</button>
+                
+                <div class="form-footer">
+                    <p>Already have an account? <a href="#" class="switch-tab" data-tab="login">Login</a></p>
+                </div>
+                
+                <div class="success-message" id="signup-success">Account created successfully!</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="config.js"></script>
+</body>
+</html>
