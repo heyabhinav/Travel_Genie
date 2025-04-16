@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TravelGenie - Budget Tracker</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/budget.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-globe-americas"></i>
+            <span>TravelGenie</span>
+        </div>
+        <div class="nav-links">
+            <a href="../index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="itinerary.html"><i class="fas fa-map-marked-alt"></i> Itinerary</a>
+            <a href="budget.html" class="active"><i class="fas fa-wallet"></i> Budget</a>
+            <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+        </div>
+    </nav>
+
+    <div class="budget-container">
+        <div class="budget-header">
+            <div class="trip-selector">
+                <select id="tripSelect">
+                    <option value="">Select a Trip</option>
+                </select>
+            </div>
+            <div class="budget-summary">
+                <div class="summary-card">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <div class="summary-info">
+                        <h3>Total Budget</h3>
+                        <p id="totalBudget">Rs.0</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <i class="fas fa-receipt"></i>
+                    <div class="summary-info">
+                        <h3>Total Spent</h3>
+                        <p id="totalSpent">Rs.0</p>
+                    </div>
+                </div>
+                <div class="summary-card">
+                    <i class="fas fa-piggy-bank"></i>
+                    <div class="summary-info">
+                        <h3>Remaining</h3>
+                        <p id="remaining">Rs.0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="budget-content">
+            <div class="budget-charts">
+                <div class="chart-container">
+                    <h3>Expense Categories</h3>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Daily Spending</h3>
+                    <canvas id="spendingChart"></canvas>
+                </div>
+            </div>
+
+            <div class="expenses-section">
+                <div class="expenses-header">
+                    <h2>Expenses</h2>
+                    <button class="btn-primary" id="addExpenseBtn">
+                        <i class="fas fa-plus"></i> Add Expense
+                    </button>
+                </div>
+
+                <div class="expenses-filters">
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="accommodation">Accommodation</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="activities">Activities</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <input type="date" id="dateFilter">
+                    <button class="btn-secondary" id="clearFilters">Clear Filters</button>
+                </div>
+
+                <div class="expenses-list" id="expensesList">
+                    <!-- Expenses will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div class="modal" id="expenseModal">
+        <div class="modal-content">
+            <h2>Add New Expense</h2>
+            <form id="expenseForm">
+                <div class="form-group">
+                    <label for="expenseTitle">Title</label>
+                    <input type="text" id="expenseTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseAmount">Amount</label>
+                    <input type="number" id="expenseAmount" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseCategory">Category</label>
+                    <select id="expenseCategory" required>
+                        <option value="accommodation">Accommodation</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="food">Food & Dining</option>
+                        <option value="activities">Activities</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="expenseDate">Date</label>
+                    <input type="date" id="expenseDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="expenseNotes">Notes</label>
+                    <textarea id="expenseNotes"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary" id="cancelExpense">Cancel</button>
+                    <button type="submit" class="btn-primary">Add Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/budget.js"></script>
+</body>
+</html>

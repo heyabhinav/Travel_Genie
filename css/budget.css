@@ -1,0 +1,246 @@
+.budget-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    padding-top: 100px;
+}
+
+/* Budget Header */
+.budget-header {
+    margin-bottom: 2rem;
+}
+
+.trip-selector {
+    margin-bottom: 1.5rem;
+}
+
+.trip-selector select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: var(--white);
+}
+
+.budget-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.summary-card {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.summary-card i {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
+
+.summary-info h3 {
+    color: var(--secondary-color);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.summary-info p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Budget Charts */
+.budget-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2rem;
+}
+
+.budget-charts {
+    display: grid;
+    gap: 2rem;
+}
+
+.chart-container canvas {
+    max-height: 300px;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.chart-container {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.chart-container h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+}
+
+/* Expenses Section */
+.expenses-section {
+    background-color: var(--white);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+}
+
+.expenses-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.expenses-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.expenses-filters select,
+.expenses-filters input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.expenses-list {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.expense-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.expense-item:last-child {
+    border-bottom: none;
+}
+
+.expense-details {
+    flex: 1;
+}
+
+.expense-title {
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: 0.25rem;
+}
+
+.expense-meta {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.expense-amount {
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.expense-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background-color: var(--white);
+    padding: 2rem;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 500px;
+}
+
+.modal-content h2 {
+    margin-bottom: 1.5rem;
+    color: var(--secondary-color);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Category Colors */
+.category-accommodation { color: #4a90e2; }
+.category-transportation { color: #e74c3c; }
+.category-food { color: #2ecc71; }
+.category-activities { color: #f1c40f; }
+.category-shopping { color: #9b59b6; }
+.category-other { color: #95a5a6; }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .budget-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .expenses-filters {
+        flex-direction: column;
+    }
+    
+    .budget-summary {
+        grid-template-columns: 1fr;
+    }
+}
