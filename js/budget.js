@@ -288,8 +288,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Reset budget display
     function resetBudgetDisplay() {
         expensesList.innerHTML = '';
-        document.getElementById('totalSpent').textContent = '$0';
-        document.getElementById('remaining').textContent = '$0';
+        document.getElementById('totalSpent').textContent = 'Rs.0';
+        document.getElementById('remaining').textContent = 'Rs.0';
         
         if (categoryChart) {
             categoryChart.destroy();
