@@ -1,5 +1,4 @@
-
-  // Tab switching functionality
+// Tab switching functionality
    const tabs = document.querySelectorAll('.tab');
    const forms = document.querySelectorAll('.form');
 
@@ -76,10 +75,15 @@
            isValid = false;
        }
        
-       // If valid, show success message
+       // If valid, show success message and redirect
        if (isValid) {
            document.getElementById('login-success').style.display = 'block';
            
+           // Simulate a delay for the success message to show
+           setTimeout(() => {
+               window.location.href = 'index.html'; // Redirect to index.html
+           }, 1000);
+
            // In a real application, you would send the form data to the server here
            console.log('Login form submitted with:', { email, password });
        }
