@@ -23,7 +23,7 @@ body {
 }
 
 /* Navbar Styles */
-.navbar {
+/* .navbar {
     background-color: var(--white);
     padding: 1rem 2rem;
     display: flex;
@@ -43,7 +43,34 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
+} */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--white);
+    padding: 1rem 2rem;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
 }
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.logo-img {
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
 
 .nav-links {
     display: flex;
@@ -107,10 +134,22 @@ body {
 
 /* Hero Section */
 .hero-section {
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.85), 
+        rgba(255, 255, 255, 0.85)
+    ), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80');
+    
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Optional for parallax effect */
+
     padding: 8rem 2rem 4rem;
     text-align: center;
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%;
+    width: 100%;
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .hero-content {
@@ -134,9 +173,189 @@ body {
     gap: 1rem;
     justify-content: center;
     margin-bottom: 3rem;
+    
+}
+/* Start Planning */
+.cta-buttons .btn-primary a.cta-link {
+    text-decoration: none; 
+    color: inherit; 
+    display: block;
+    width: 100%;
+    height: 100%;
+    
+    box-sizing: border-box;
+}
+
+.cta-buttons .btn-primary a.cta-link:hover {
+   
+    cursor: pointer; 
+}
+
+
+ /* Pro Feature */
+ .pro-features-section {
+    padding: 60px 20px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.pro-features-section h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.pro-features-section p {
+    font-size: 1rem;
+    color: #666;
+    max-width: 700px;
+    margin: 0 auto 40px;
+}
+
+.pro-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.pro-feature-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+    text-align: left;
+    transition: transform 0.2s ease-in-out;
+}
+
+.pro-feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.pro-feature-card i {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.pro-feature-card h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.pro-feature-card p {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+
+  /* Rating Section */
+
+  .testimonials-section {
+    padding: 60px 20px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.testimonials-section h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.testimonials-section p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.testimonial-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto 30px;
+}
+
+.testimonial-card {
+    background-color: #f8f8f8;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+}
+
+.testimonial-card img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.testimonial-card h4 {
+    margin: 5px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.testimonial-card span {
+    font-size: 0.9rem;
+    color: #888;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.testimonial-card .stars {
+    color: gold;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.testimonial-card p {
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.more-reviews-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: 600;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.more-reviews-link:hover {
+    text-decoration: underline;
+}
+
+.feature-text {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit color from parent (usually black) */
+    display: inline-block; /* Behave like inline, but allow width/height */
+    /* Add any other styles to reset link appearance */
+}
+
+.feature-text:hover {
+    /* Add hover effect if desired */
+    color: #007bff; /* Example: Change color on hover */
+    cursor: pointer; /* Change cursor on hover */
 }
 
 /* Features Grid */
+
+
+
 .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
