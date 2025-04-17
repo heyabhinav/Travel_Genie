@@ -124,20 +124,15 @@ document.addEventListener('DOMContentLoaded', () => {
             name: document.getElementById('newTripName').value,
             startDate: document.getElementById('newTripStart').value,
             endDate: document.getElementById('newTripEnd').value,
-            activities: {},
-            createdAt: Date.now(),
-            userId: auth.currentUser.uid
+            budget: parseFloat(document.getElementById('newTripBudget').value),
+            userId: auth.currentUser.uid,
+            createdAt: Date.now()
         };
 
         try {
-            // Save to Firebase
             const tripRef = await db.ref('trips').push(tripData);
-            
-            // Close modal and reset form
             newTripModal.classList.remove('active');
             newTripForm.reset();
-            
-            // Show trip details (the UI will update automatically through the Firebase listener)
             showTripDetails(tripRef.key, tripData);
         } catch (error) {
             alert('Error creating trip: ' + error.message);
