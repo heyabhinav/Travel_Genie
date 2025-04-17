@@ -173,7 +173,24 @@ body {
     gap: 1rem;
     justify-content: center;
     margin-bottom: 3rem;
+    
 }
+/* Start Planning */
+.cta-buttons .btn-primary a.cta-link {
+    text-decoration: none; 
+    color: inherit; 
+    display: block;
+    width: 100%;
+    height: 100%;
+    
+    box-sizing: border-box;
+}
+
+.cta-buttons .btn-primary a.cta-link:hover {
+   
+    cursor: pointer; 
+}
+
 
  /* Pro Feature */
  .pro-features-section {
@@ -322,7 +339,23 @@ body {
     text-decoration: underline;
 }
 
+.feature-text {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit color from parent (usually black) */
+    display: inline-block; /* Behave like inline, but allow width/height */
+    /* Add any other styles to reset link appearance */
+}
+
+.feature-text:hover {
+    /* Add hover effect if desired */
+    color: #007bff; /* Example: Change color on hover */
+    cursor: pointer; /* Change cursor on hover */
+}
+
 /* Features Grid */
+
+
+
 .features-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
