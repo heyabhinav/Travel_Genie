@@ -1,46 +1,91 @@
 document.addEventListener('DOMContentLoaded', () => {
+    let map = null;
+    let markers = [];
+
     // Initialize map
-    const map = L.map('map').setView([20, 0], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
+    function initializeMap() {
+        if (!map) {
+            map = L.map('map', {
+                center: [20, 0],
+                zoom: 2,
+                zoomControl: true,
+                scrollWheelZoom: true
+            });
 
-    // Initialize geocoder
-    const geocoder = L.Control.geocoder({
-        defaultMarkGeocode: false
-    })
-    .on('markgeocode', function(e) {
-        const bbox = e.geocode.bbox;
-        const poly = L.polygon([
-            bbox.getSouthEast(),
-            bbox.getNorthEast(),
-            bbox.getNorthWest(),
-            bbox.getSouthWest()
-        ]);
-        map.fitBounds(poly.getBounds());
-        const center = poly.getBounds().getCenter();
-        L.marker(center).addTo(map);
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
 
-        // Update location input
-        document.getElementById('activityLocation').value = e.geocode.name;
-        // Store coordinates for saving later
-        document.getElementById('activityLocation').dataset.coordinates = JSON.stringify([center.lat, center.lng]);
-    })
-    .addTo(map);
+            // Initialize geocoder
+            const geocoder = L.Control.Geocoder.nominatim();
+            const control = L.Control.geocoder({
+                geocoder: geocoder,
+                defaultMarkGeocode: false,
+                position: 'topleft',
+                placeholder: 'Search for a place...'
+            }).on('markgeocode', function(e) {
+                const latlng = e.geocode.center;
+                clearMarkers();
+                const marker = L.marker(latlng).addTo(map);
+                markers.push(marker);
+                map.setView(latlng, 13);
+
+                // Update location input in activity form
+                document.getElementById('activityLocation').value = e.geocode.name;
+                document.getElementById('activityLocation').dataset.coordinates = JSON.stringify([latlng.lat, latlng.lng]);
+            }).addTo(map);
+
+            // Force map to update its size
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 100);
+        }
+    }
+
+    // Clear existing markers
+    function clearMarkers() {
+        markers.forEach(marker => map.removeLayer(marker));
+        markers = [];
+    }
 
     // DOM Elements
     const newTripBtn = document.getElementById('newTripBtn');
     const newTripModal = document.getElementById('newTripModal');
-    const cancelNewTrip = document.getElementById('cancelNewTrip');
-    const newTripForm = document.getElementById('newTripForm');
-    const tripList = document.getElementById('tripList');
-    const tripDetails = document.getElementById('tripDetails');
-    const emptyState = document.getElementById('emptyState');
-    const activitiesList = document.getElementById('activitiesList');
-    const newActivityForm = document.getElementById('newActivityForm');
-    const addActivityBtn = document.getElementById('addActivityBtn');
-    const activityModal = document.getElementById('activityModal');
-    const cancelActivity = document.getElementById('cancelActivity');
+    // Navigation between days
+    document.getElementById('prevDay').addEventListener('click', () => {
+        const currentDayElement = document.getElementById('currentDay');
+        let currentDay = parseInt(currentDayElement.textContent.split(' ')[1]);
+        if (currentDay > 1) {
+            currentDay--;
+            currentDayElement.textContent = `Day ${currentDay}`;
+            filterActivitiesByDay(currentDay);
+        }
+    });
+
+    document.getElementById('nextDay').addEventListener('click', () => {
+        const currentDayElement = document.getElementById('currentDay');
+        let currentDay = parseInt(currentDayElement.textContent.split(' ')[1]);
+        const tripStartDate = document.getElementById('tripStartDate').value;
+        const tripEndDate = document.getElementById('tripEndDate').value;
+        const maxDays = getTripDuration(tripStartDate, tripEndDate);
+        
+        if (currentDay < maxDays) {
+            currentDay++;
+            currentDayElement.textContent = `Day ${currentDay}`;
+            filterActivitiesByDay(currentDay);
+        }
+    });
+
+    // Filter activities by day
+    function filterActivitiesByDay(day) {
+        const activities = document.querySelectorAll('.activity-item');
+        activities.forEach(activity => {
+            const activityDay = parseInt(activity.dataset.day);
+            activity.style.display = activityDay === day ? 'flex' : 'none';
+        });
+    }
 
     // Initialize Sortable for activities
     new Sortable(activitiesList, {
@@ -57,17 +102,18 @@ document.addEventListener('DOMContentLoaded', () => {
         newTripModal.classList.add('active');
     });
 
-    cancelNewTrip.addEventListener('click', () => {
-        newTripModal.classList.remove('active');
+    // Close modals when clicking close buttons (using onclick in HTML)
+    document.querySelectorAll('.close-btn, .btn-secondary').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const modal = e.target.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        });
     });
 
     addActivityBtn.addEventListener('click', () => {
         activityModal.classList.add('active');
-    });
-
-    cancelActivity.addEventListener('click', () => {
-        activityModal.classList.remove('active');
-        newActivityForm.reset();
     });
 
     // Create New Trip
@@ -87,14 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Save to Firebase
             const tripRef = await db.ref('trips').push(tripData);
             
-            // Add to UI
-            addTripToList(tripRef.key, tripData);
-            
             // Close modal and reset form
             newTripModal.classList.remove('active');
             newTripForm.reset();
             
-            // Show trip details
+            // Show trip details (the UI will update automatically through the Firebase listener)
             showTripDetails(tripRef.key, tripData);
         } catch (error) {
             alert('Error creating trip: ' + error.message);
@@ -112,6 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadUserTrips(userId) {
         const tripsRef = db.ref('trips');
+        // Remove any existing listeners
+        tripsRef.off('value');
+        
         tripsRef.orderByChild('userId').equalTo(userId).on('value', (snapshot) => {
             tripList.innerHTML = '';
             
@@ -144,20 +190,52 @@ document.addEventListener('DOMContentLoaded', () => {
         tripList.appendChild(tripCard);
     }
 
+    // Calculate trip duration in days
+    function getTripDuration(startDate, endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const diffTime = Math.abs(end - start);
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    }
+
+    // Populate day selector in activity modal
+    function populateDaySelector(startDate, endDate) {
+        const daySelector = document.getElementById('activityDay');
+        daySelector.innerHTML = '';
+        
+        const duration = getTripDuration(startDate, endDate);
+        for (let i = 1; i <= duration; i++) {
+            const date = new Date(startDate);
+            date.setDate(date.getDate() + i - 1);
+            
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = `Day ${i} - ${date.toLocaleDateString()}`;
+            daySelector.appendChild(option);
+        }
+    }
+
+    // Show trip details
     function showTripDetails(tripId, tripData) {
-        tripDetails.classList.remove('hidden');
-        document.getElementById('tripName').value = tripData.name;
-        document.getElementById('startDate').value = tripData.startDate;
-        document.getElementById('endDate').value = tripData.endDate;
-        
-        // Store current trip ID
         tripDetails.dataset.tripId = tripId;
+        tripName.value = tripData.name;
+        tripStartDate.value = tripData.startDate;
+        tripEndDate.value = tripData.endDate;
         
-        // Load activities
+        tripDetails.classList.remove('hidden');
+        
+        // Initialize map when showing trip details
+        setTimeout(() => {
+            initializeMap();
+            if (map) {
+                map.invalidateSize();
+            }
+        }, 100);
+        
         loadActivities(tripId);
         
-        // Update map markers
-        updateMapMarkers(tripData.activities || {});
+        // Update day selector when showing trip details
+        populateDaySelector(tripData.startDate, tripData.endDate);
     }
 
     // Handle new activity form submission
@@ -174,6 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const activityData = {
             name: document.getElementById('activityName').value,
             location: locationInput.value,
+            day: parseInt(document.getElementById('activityDay').value),
             time: document.getElementById('activityTime').value,
             notes: document.getElementById('activityNotes').value,
             coordinates: JSON.parse(locationInput.dataset.coordinates || '[0,0]'),
@@ -184,17 +263,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Save to Firebase
             const activityRef = await db.ref(`trips/${tripId}/activities`).push(activityData);
             
-            // Add to UI
-            addActivityToList(activityRef.key, activityData);
-            
             // Close modal and reset form
             activityModal.classList.remove('active');
             newActivityForm.reset();
             
-            // Update map
-            updateMapMarkers({
-                [activityRef.key]: activityData
-            });
+            // The UI will update automatically through the Firebase listener
+            // No need to manually update UI or map here
         } catch (error) {
             alert('Error adding activity: ' + error.message);
         }
@@ -202,6 +276,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadActivities(tripId) {
         const activitiesRef = db.ref(`trips/${tripId}/activities`);
+        // Remove any existing listeners
+        activitiesRef.off('value');
+        
         activitiesRef.on('value', (snapshot) => {
             activitiesList.innerHTML = '';
             
@@ -217,18 +294,31 @@ document.addEventListener('DOMContentLoaded', () => {
     function addActivityToList(activityId, activity) {
         const activityElement = document.createElement('div');
         activityElement.className = 'activity-item';
-        activityElement.draggable = true;
+        activityElement.dataset.id = activityId;
+        activityElement.dataset.day = activity.day;
+        
         activityElement.innerHTML = `
             <div class="activity-time">${activity.time}</div>
             <div class="activity-details">
-                <h4>${activity.name}</h4>
-                <p>${activity.location}</p>
+                <strong>${activity.name}</strong>
+                <div class="activity-location">
+                    <i class="fas fa-location-dot"></i> ${activity.location}
+                </div>
+                ${activity.notes ? `<div class="activity-notes"><i class="fas fa-note-sticky"></i> ${activity.notes}</div>` : ''}
             </div>
             <div class="activity-actions">
-                <button class="btn-edit"><i class="fas fa-edit"></i></button>
-                <button class="btn-delete"><i class="fas fa-trash"></i></button>
+                <button class="btn-icon edit-activity" title="Edit Activity">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn-icon delete-activity" title="Delete Activity">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
         `;
+
+        // Only show activities for the current day
+        const currentDay = parseInt(document.getElementById('currentDay').textContent.split(' ')[1]);
+        activityElement.style.display = activity.day === currentDay ? 'flex' : 'none';
         
         activitiesList.appendChild(activityElement);
     }
