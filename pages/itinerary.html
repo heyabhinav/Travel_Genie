@@ -55,21 +55,15 @@
                 <div class="trip-info">
                     <input type="text" id="tripName" class="trip-name" placeholder="Trip Name">
                     <div class="date-range">
-                        <input type="date" id="startDate">
+                        <input type="date" id="tripStartDate">
                         <span>to</span>
-                        <input type="date" id="endDate">
+                        <input type="date" id="tripEndDate">
                     </div>
                 </div>
 
                 <div class="itinerary-builder">
                     <div class="map-container">
                         <div id="map"></div>
-                        <div class="location-search">
-                            <input type="text" id="locationSearch" placeholder="Search for a place...">
-                            <button class="btn-primary" id="addLocation">
-                                <i class="fas fa-plus"></i> Add to Itinerary
-                            </button>
-                        </div>
                     </div>
 
                     <div class="schedule-container">
@@ -111,53 +105,92 @@
     <!-- New Trip Modal -->
     <div class="modal" id="newTripModal">
         <div class="modal-content">
-            <h2>Create New Trip</h2>
+            <div class="modal-header">
+                <h2>Create New Trip</h2>
+                <button type="button" class="close-btn" onclick="document.getElementById('newTripModal').classList.remove('active')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <form id="newTripForm">
                 <div class="form-group">
-                    <label for="newTripName">Trip Name</label>
-                    <input type="text" id="newTripName" required>
+                    <label for="newTripName">
+                        <i class="fas fa-suitcase"></i> Trip Name
+                    </label>
+                    <input type="text" id="newTripName" placeholder="Enter trip name" required>
                 </div>
                 <div class="form-group">
-                    <label for="newTripStart">Start Date</label>
+                    <label for="newTripStart">
+                        <i class="fas fa-calendar"></i> Start Date
+                    </label>
                     <input type="date" id="newTripStart" required>
                 </div>
                 <div class="form-group">
-                    <label for="newTripEnd">End Date</label>
+                    <label for="newTripEnd">
+                        <i class="fas fa-calendar-check"></i> End Date
+                    </label>
                     <input type="date" id="newTripEnd" required>
                 </div>
                 <div class="modal-buttons">
-                    <button type="button" class="btn-secondary" id="cancelNewTrip">Cancel</button>
-                    <button type="submit" class="btn-primary">Create Trip</button>
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('newTripModal').classList.remove('active')">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-plus"></i> Create Trip
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Activity Modal -->
-    <div id="activityModal" class="modal">
+    <div class="modal" id="activityModal">
         <div class="modal-content">
-            <h2>Add Activity</h2>
+            <div class="modal-header">
+                <h2>Add New Activity</h2>
+                <button type="button" class="close-btn" onclick="document.getElementById('activityModal').classList.remove('active')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <form id="newActivityForm">
                 <div class="form-group">
-                    <label for="activityName">Activity Name</label>
-                    <input type="text" id="activityName" required>
+                    <label for="activityName">
+                        <i class="fas fa-map-pin"></i> Activity Name
+                    </label>
+                    <input type="text" id="activityName" placeholder="Enter activity name" required>
                 </div>
                 <div class="form-group">
-                    <label for="activityLocation">Location (Search on map)</label>
-                    <input type="text" id="activityLocation" required>
-                    <small>Use the search box on the map to find and select a location</small>
+                    <label for="activityDay">
+                        <i class="fas fa-calendar-day"></i> Day
+                    </label>
+                    <select id="activityDay" required>
+                        <!-- Days will be populated dynamically based on trip duration -->
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="activityTime">Time</label>
+                    <label for="activityLocation">
+                        <i class="fas fa-location-dot"></i> Location
+                    </label>
+                    <input type="text" id="activityLocation" placeholder="Search for a location" required>
+                </div>
+                <div class="form-group">
+                    <label for="activityTime">
+                        <i class="fas fa-clock"></i> Time
+                    </label>
                     <input type="time" id="activityTime" required>
                 </div>
                 <div class="form-group">
-                    <label for="activityNotes">Notes</label>
-                    <textarea id="activityNotes"></textarea>
+                    <label for="activityNotes">
+                        <i class="fas fa-note-sticky"></i> Notes
+                    </label>
+                    <textarea id="activityNotes" rows="3" placeholder="Add any additional notes"></textarea>
                 </div>
-                <div class="modal-actions">
-                    <button type="button" id="cancelActivity" class="btn-secondary">Cancel</button>
-                    <button type="submit" class="btn-primary">Add Activity</button>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('activityModal').classList.remove('active')">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-plus"></i> Add Activity
+                    </button>
                 </div>
             </form>
         </div>
