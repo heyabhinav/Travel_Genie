@@ -173,7 +173,7 @@ body {
     gap: 1rem;
     justify-content: center;
     margin-bottom: 3rem;
-    
+
 }
 /* Start Planning */
 .cta-buttons .btn-primary a.cta-link {
@@ -189,6 +189,26 @@ body {
 .cta-buttons .btn-primary a.cta-link:hover {
    
     cursor: pointer; 
+
+    /*About us */
+}.about-section {
+    padding: 50px 20px;
+    background-color: #f7f7f7;
+    text-align: center;
+}
+
+.about-section h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.about-section p {
+    max-width: 800px;
+    margin: 10px auto;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #555;
 }
 
 
