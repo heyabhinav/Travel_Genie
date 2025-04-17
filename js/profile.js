@@ -198,7 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
             passwordChangeForm.reset();
             modal.style.display = 'none';
 
-            alert('Password updated successfully!');
+            alert('Password updated successfully! Please log in again with your new password.');
+            // Sign out the user
+            await auth.signOut();
+            // Redirect to auth page
+            window.location.href = 'auth.html';
         } catch (error) {
             if (error.code === 'auth/wrong-password') {
                 alert('Current password is incorrect!');
