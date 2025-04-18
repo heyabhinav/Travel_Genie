@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const changePasswordBtn = document.getElementById('changePassword');
     const deleteAccountBtn = document.getElementById('deleteAccount');
     const preferencesForm = document.querySelector('.preferences-form');
+    const modal = document.getElementById('passwordChangeModal');
+    const closeBtn = document.querySelector('.modal .close');
+    const passwordChangeForm = document.getElementById('passwordChangeForm');
+    const submitBtn = passwordChangeForm.querySelector('button[type="submit"]');
 
     // Check if delete account button exists
     if (!deleteAccountBtn) {
@@ -141,9 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Handle password change modal
-    const modal = document.getElementById('passwordChangeModal');
-    const closeBtn = document.querySelector('.close');
-    const passwordChangeForm = document.getElementById('passwordChangeForm');
 
     changePasswordBtn.addEventListener('click', () => {
         modal.style.display = 'block';
@@ -164,7 +165,14 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         
         const user = auth.currentUser;
-        if (!user) return;
+        if (!user) {
+            alert('No user is currently logged in');
+            return;
+        }
+
+        // Disable submit button to prevent multiple submissions
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Updating...';
 
         const currentPassword = document.getElementById('currentPassword').value;
         const newPassword = document.getElementById('newPassword').value;
@@ -173,11 +181,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // Validate new password
         if (newPassword !== confirmPassword) {
             alert('New passwords do not match!');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Change Password';
             return;
         }
 
         if (newPassword.length < 6) {
             alert('New password must be at least 6 characters long!');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Change Password';
             return;
         }
 
@@ -198,11 +210,26 @@ document.addEventListener('DOMContentLoaded', () => {
             passwordChangeForm.reset();
             modal.style.display = 'none';
 
-            alert('Password updated successfully!');
+            alert('Password updated successfully! Please log in again with your new password.');
+            
+            try {
+                // Sign out the user
+                await auth.signOut();
+                // Redirect to auth page
+                window.location.href = 'auth.html';
+            } catch (signOutError) {
+                console.error('Error during sign out:', signOutError);
+                // Force redirect to auth page even if signOut fails
+                window.location.href = 'auth.html';
+            }
         } catch (error) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Change Password';
+            
             if (error.code === 'auth/wrong-password') {
                 alert('Current password is incorrect!');
             } else {
+                console.error('Password update error:', error);
                 alert('Error updating password: ' + error.message);
             }
         }
@@ -232,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await avatarRef.delete().catch(console.error);
             }
 
-            // 2. Delete user data from database
+            // 2. Delete user data from databasegti
             await db.ref(`users/${user.uid}`).remove();
             
             // 3. Delete user account
