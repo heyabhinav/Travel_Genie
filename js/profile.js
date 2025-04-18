@@ -235,45 +235,90 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Handle account deletion
-    deleteAccountBtn?.addEventListener('click', async () => {
-        console.log('Delete account button clicked');
-        
-        if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-            console.log('User cancelled account deletion');
-            return;
-        }
+    // Handle account deletion modal
+    const deleteAccountModal = document.getElementById('passwordModal');
+    const confirmDeleteBtn = document.getElementById('confirmDelete');
+    const cancelDeleteBtn = document.getElementById('cancelDelete');
+    const passwordInput = document.getElementById('dltPassword');
 
+    deleteAccountBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+            deleteAccountModal.classList.add('show');
+            passwordInput.value = ''; // Clear previous input
+            passwordInput.focus();
+        }
+    });
+
+    cancelDeleteBtn.addEventListener('click', () => {
+        deleteAccountModal.classList.remove('show');
+    });
+
+    // Close modal if clicking outside
+    deleteAccountModal.addEventListener('click', (e) => {
+        if (e.target === deleteAccountModal) {
+            deleteAccountModal.classList.remove('show');
+        }
+    });
+
+    // Handle account deletion confirmation
+    confirmDeleteBtn.addEventListener('click', async () => {
         const user = auth.currentUser;
-        if (!user) {
-            console.error('No user is currently logged in');
+        if (!user) return;
+
+        const password = passwordInput.value;
+        if (!password) {
+            alert('Please enter your password');
             return;
         }
-        
-        console.log('Starting account deletion process...');
 
         try {
-            // 1. Delete user's avatar from storage if it exists
-            if (user.photoURL && user.photoURL.includes('avatars')) {
-                const avatarRef = storage.ref(`avatars/${user.uid}`);
-                await avatarRef.delete().catch(console.error);
-            }
+            // Re-authenticate user
+            const credential = firebase.auth.EmailAuthProvider.credential(
+                user.email,
+                password
+            );
+            await user.reauthenticateWithCredential(credential);
 
-            // 2. Delete user data from databasegti
+            // Delete user data from database
             await db.ref(`users/${user.uid}`).remove();
             
-            // 3. Delete user account
+            // Delete user's avatar from storage if it exists
+            if (user.photoURL && user.photoURL.includes('avatars')) {
+                try {
+                    await storage.ref(`avatars/${user.uid}`).delete();
+                } catch (storageError) {
+                    console.error('Error deleting avatar:', storageError);
+                }
+            }
+
+            // Delete user's trips
+            try {
+                await db.ref(`trips`).orderByChild('userId').equalTo(user.uid).once('value', async (snapshot) => {
+                    const updates = {};
+                    snapshot.forEach(child => {
+                        updates[child.key] = null;
+                    });
+                    if (Object.keys(updates).length > 0) {
+                        await db.ref('trips').update(updates);
+                    }
+                });
+            } catch (tripsError) {
+                console.error('Error deleting trips:', tripsError);
+            }
+            
+            // Delete user account
             await user.delete();
             
-            console.log('Account successfully deleted, redirecting...');
+            // Close modal and redirect
+            deleteAccountModal.classList.remove('show');
+            alert('Your account has been successfully deleted.');
             window.location.href = '../index.html';
         } catch (error) {
-            console.error('Error during account deletion:', error);
-            if (error.code === 'auth/requires-recent-login') {
-                alert('For security reasons, please log out and log back in before deleting your account.');
-                return;
+            if (error.code === 'auth/wrong-password') {
+                alert('Incorrect password. Please try again.');
+            } else {
+                alert('Error deleting account: ' + error.message);
             }
-            alert('Error deleting account: ' + error.message);
         }
     });
 });
