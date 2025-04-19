@@ -350,8 +350,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 order: index
             };
         });
-        
-        // Save to Firebase
-        // Implementation depends on your data structure
     }
 });
