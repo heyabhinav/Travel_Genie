@@ -1,4 +1,49 @@
-# TravelGenie - User Flow Diagram
+# TravelGenie: Travel Itinerary Planner
+
+## Introduction
+TravelGenie is a full-featured travel itinerary planning app designed to help users organize their trips, manage daily activities, and track travel budgets. The application allows users to create and customize itineraries, add and arrange activities using drag-and-drop, and monitor expenses with a built-in budget tracker. User authentication is handled securely via Firebase, ensuring user data privacy and personalized experiences.
+
+## Project Type
+Frontend
+
+## Deployed App
+Frontend: https://masai-travel-genie.vercel.app
+
+Backend: (Firebase Realtime Database)
+
+Database: (Firebase Realtime Database)
+
+## Directory Structure
+
+```bash
+Travel_Genie/
+├─ css/
+│  ├─ auth.css
+│  ├─ budget.css
+│  ├─ itinerary.css
+│  ├─ profile.css
+│  └─ style.css
+├─ docs/
+│  ├─ project_description.md
+│  └─ user_flow.md
+├─ images/
+│  └─ Logo.jpg
+├─ index.html
+├─ js/
+│  ├─ auth.js
+│  ├─ budget.js
+│  ├─ config.js
+│  ├─ itinerary.js
+│  └─ profile.js
+├─ pages/
+│  ├─ auth.html
+│  ├─ budget.html
+│  ├─ itinerary.html
+│  └─ profile.html
+```
+
+
+## User Flow Diagram
 
 ```mermaid
 graph TD
@@ -21,8 +66,8 @@ graph TD
 
     %% Profile Management
     H --> M[Manage Preferences]
-    H --> N[View Travel Stats]
     H --> O[Account Settings]
+    H --> N[View Travel Stats]
 
     O --> P[Change Password]
     O --> Q[Delete Account]
@@ -46,85 +91,71 @@ graph TD
 
 ```
 
-## Detailed User Flows
 
-### 1. Authentication Flow
-1. User arrives at landing page
-2. Options to:
-   - Sign up with email/password
-   - Login with existing account
-   - Sign in with Google
-3. After successful authentication, redirected to profile
+## Video Walkthrough of the project
+_Video walkthrough of all of the features:  [Link](https://drive.google.com/file/d/1xkrUET3NtOfypLvbVC76NPor1C0XbtUG/view?usp=sharing)_
 
-### 2. Profile Management Flow
-1. View/Edit personal information:
-   - Full name
-   - Phone number
-   - Location
-2. Upload/Change profile picture
-3. Manage preferences:
-   - Email notifications
-   - Profile visibility
-   - Currency preference
-4. View travel statistics:
-   - Trips planned
-   - Countries visited
-   - Activities completed
-   - Travel buddies
-5. Account settings:
-   - Change password (via email)
-   - Delete account (requires confirmation)
+## Features
+- User authentication (sign up, login, logout) with Firebase
+- Create, edit, and delete travel itineraries
+- Drag-and-drop to organize activities by day
+- Add, edit, and remove activities for each day
+- Budget tracking and expense management
+- Visual budget progress bar
+- Share and save itineraries
+- Responsive and modern UI
 
-### 3. Trip Planning Flow
-1. Create new trip:
-   - Set trip dates
-   - Set initial budget
-   - Choose destination
-2. Add activities:
-   - Name and location
-   - Date and time
-   - Notes
-   - Map location
-3. View/Edit existing trips:
-   - Modify details
-   - Update activities
-   - Delete trip
-4. Interactive map features:
-   - View activity locations
-   - Plan routes
-   - Add new locations
+## Design decisions or assumptions
+- Used Firebase for secure and scalable authentication and data storage
+- All itinerary and budget data is scoped to the authenticated user
+- UI/UX is optimized for clarity and ease of use, including modals and dynamic feedback
+- Shopify Draggable library is used for intuitive drag-and-drop
+- No backend server; all data is handled via Firebase
 
-### 4. Budget Management Flow
-1. Set trip budget
-2. Track expenses:
-   - Add new expenses
-   - Categorize spending
-   - Add descriptions
-3. View financial overview:
-   - Total budget
-   - Amount spent
-   - Remaining budget
-4. Category breakdown:
-   - Visual charts
-   - Category-wise spending
-   - Budget alerts
+## Installation & Getting started
+1. Clone the repository or copy the project folder:
+```bash
+cd "Travel_Genie"
+```
+2. Add your Firebase configuration to `js/config.js`:
+```js
+// js/config.js
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  databaseURL: "YOUR_DATABASE_URL",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+```
+3. Open `index.html` (or any page in `pages/`) in your browser to run the app locally.
 
-### 5. Data Integration
-1. All data synced with Firebase:
-   - Real-time updates
-   - Data persistence
-   - Multi-device access
-2. Map integration:
-   - Location services
-   - Route planning
-   - Activity coordination
+## Usage
+- Sign up or log in with your email and password
+- Create a new itinerary and add days/activities
+- Drag and drop activities to rearrange them
+- Set a travel budget and add expenses to track spending
+- Save or share your itinerary with others
 
-### 6. Security Features
-1. Authentication required for:
-   - Viewing profile
-   - Creating trips
-   - Managing budget
-2. Data privacy:
-   - User-specific data isolation
-   - Secure authentication
-   - Protected routes
+## Credentials
+Demo User (if available):
+- Email: demo@travelgenie.com
+- Password: Demo1234
+
+## APIs Used
+- [Firebase Authentication](https://firebase.google.com/docs/auth)
+- [Firebase Realtime Database](https://firebase.google.com/docs/database)
+- [Shopify Draggable](https://shopify.github.io/draggable/)
+
+## API Endpoints
+_All data operations are handled via Firebase Realtime Database. Example structure:_
+- `users/{uid}/itineraries` - User itineraries
+- `users/{uid}/budget` - User budgets and expenses
+
+## Technology Stack
+- HTML, CSS, JavaScript (Vanilla)
+- Firebase (Authentication, Realtime Database)
+- Shopify Draggable (for drag-and-drop)
+- Modern responsive design
