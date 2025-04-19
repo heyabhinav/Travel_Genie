@@ -4,16 +4,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const avatarUpload = document.getElementById('avatarUpload');
     const changePasswordBtn = document.getElementById('changePassword');
     const deleteAccountBtn = document.getElementById('deleteAccount');
+    const logoutButton = document.getElementById('logoutButton');
     const preferencesForm = document.querySelector('.preferences-form');
     const modal = document.getElementById('passwordChangeModal');
     const closeBtn = document.querySelector('.modal .close');
     const passwordChangeForm = document.getElementById('passwordChangeForm');
     const submitBtn = passwordChangeForm.querySelector('button[type="submit"]');
 
-    // Check if delete account button exists
+    // Check if required buttons exist
     if (!deleteAccountBtn) {
         console.error('Delete account button not found in the DOM');
     }
+    if (!logoutButton) {
+        console.error('Logout button not found in the DOM');
+    }
+
+    // Handle logout
+    logoutButton.addEventListener('click', async () => {
+        try {
+            await auth.signOut();
+            window.location.href = '../index.html';
+        } catch (error) {
+            console.error('Error signing out:', error);
+            alert('Error signing out. Please try again.');
+        }
+    });
 
     // Check authentication
     auth.onAuthStateChanged((user) => {
@@ -96,33 +111,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle avatar upload
     avatarUpload.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const user = auth.currentUser;
-        if (!user) return;
-
         try {
-            // Create storage reference
-            const storageRef = storage.ref(`avatars/${user.uid}`);
+            console.log('Avatar upload change event triggered');
+            const file = e.target.files[0];
+            if (!file) {
+                console.log('No file selected');
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user) {
+                console.log('No user logged in');
+                alert('Please log in to update your profile picture');
+                return;
+            }
+
+            console.log('File selected:', file.name);
+
+            // Show loading state
+            const profileImage = document.getElementById('profileImage');
+            if (!profileImage) {
+                console.error('Profile image element not found');
+                return;
+            }
+            profileImage.style.opacity = '0.5';
+
+            // Create a storage reference
+            const fileRef = storage.ref().child(`avatars/${user.uid}`);
+            console.log('Uploading to:', fileRef.fullPath);
+
+            // Upload the file
+            const uploadTask = fileRef.put(file);
+
+            // Monitor upload progress
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log('Upload progress:', progress + '%');
+                },
+                (error) => {
+                    console.error('Upload error:', error);
+                    profileImage.style.opacity = '1';
+                    alert('Error uploading file: ' + error.message);
+                },
+                async () => {
+                    try {
+                        // Get the download URL
+                        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                        console.log('File uploaded, URL:', downloadURL);
+
+                        // Update profile
+                        await user.updateProfile({
+                            photoURL: downloadURL
+                        });
             
-            // Upload file
-            const snapshot = await storageRef.put(file);
-            
-            // Get download URL
-            const downloadURL = await snapshot.ref.getDownloadURL();
-            
-            // Update user profile
-            await user.updateProfile({
-                photoURL: downloadURL
-            });
-            
-            // Update avatar in UI
-            document.getElementById('profileImage').src = downloadURL;
-            
-            alert('Profile picture updated successfully!');
+                        // Update UI
+                        profileImage.src = downloadURL;
+                        profileImage.style.opacity = '1';
+
+                        // Update database
+                        await db.ref(`users/${user.uid}/profile/photoURL`).set(downloadURL);
+
+                        console.log('Profile updated successfully');
+                        alert('Profile picture updated successfully!');
+                    } catch (error) {
+                        console.error('Error updating profile:', error);
+                        profileImage.style.opacity = '1';
+                        alert('Error updating profile: ' + error.message);
+                    }
+                }
+            );
         } catch (error) {
-            alert('Error uploading profile picture: ' + error.message);
+            console.error('Error initializing upload:', error);
+            alert('Error initializing upload: ' + error.message);
         }
     });
 
